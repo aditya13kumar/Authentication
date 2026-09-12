@@ -8,13 +8,12 @@ dotenv.config();
 
 
 const app = express();
+app.use(express.json());
 
 
 
 
-app.use("/",async(req,res)=>{
-   res.send("hello aditya!!")
-})
+
 app.use('/api/auth',route);
 
 app.listen(5000,()=>{
