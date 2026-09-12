@@ -27,10 +27,28 @@ export async function registeruser(req,res) {
         expiresIn:"1d"
     })
 
+    res.status(201).json({
+        message:"user created successfully!!",
+        user:{
+            username:user.username,
+            email:user.email
+        },
+        token
+    })
+}
 
-        {message:"user registersuccessfully"},
-        user
-    )
+export async function getUser(req,res) {
+    const token = req.headers.authorization?.split(" ")[ 1 ];
+
+    if(!token){
+        return res.status(201).json({message:"token unavilable!!"});
+    }
+
+    const decoded = jwt.verify(token,process.env.JWT_SECRET);
+    console.log(decoded);
+
+    const user =await usermodel.findById(decoded.id);
+    if(!user){
         return res.status(201).json({message:"user not found"})
     }
     
