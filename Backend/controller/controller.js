@@ -1,64 +1,53 @@
-import usermodel from "../model/usermodel.js";
-import bcrypt from "bcrypt";
-import jwt from 'jsonwebtoken'
+import usermodel from '../model/usermodel.js';
+import bcrypt from "bcryptjs";
 
-export async function registeruser(req,res) {
-    const {username , email , passward} = req.body;
 
-    const isAlreadyexist=await usermodel.findOne({
-        $or:[
-            {username},
-            {email}
-        ]
-    })
-    if(isAlreadyexist){
-        return res.status(409).json({message:"user allready exists"})
+export const register = async (req , res)=>{
+    const {username , email, password} = req.body;
+
+    if(!username || !email || !password){
+        return res.status(400).json({message:"All fields are required"});
     }
-    const hashpassward = await bcrypt.hash(passward,10);
-
-    const user =await usermodel.create({
-        username,
-        email,
-        passward:hashpassward
-    })
-    const token = jwt.sign({
-        id:user._id
-    },process.env.JWT_SECRET,{
-        expiresIn:"1d"
-    })
-
-    res.status(201).json({
-        message:"user created successfully!!",
-        user:{
-            username:user.username,
-            email:user.email
-        },
-        token
-    })
-}
-
-export async function getUser(req,res) {
-    const token = req.headers.authorization?.split(" ")[ 1 ];
-
-    if(!token){
-        return res.status(201).json({message:"token unavilable!!"});
-    }
-
-    const decoded = jwt.verify(token,process.env.JWT_SECRET);
-    console.log(decoded);
-
-    const user =await usermodel.findById(decoded.id);
-    if(!user){
-        return res.status(201).json({message:"user not found"})
-    }
-    
-
-    res.status(200).json({
-        message:"user get successfully",
-        user:{
-            username:user.username,
-            email:user.email
+    try {
+        const existuser =await usermodel.findOne({email});
+        
+        if( existuser){
+            return res.status(400).json({message:"user allready exist!!"})
         }
-    })
+        const hashpassword= await bcrypt.hash(password,10);
+        const user = new user({
+            username,
+            email,
+            password:hashpassword
+        })
+        await user.save();
+
+        return res.status(400).json({
+            message:"user register successfull!!",
+            user:{
+                user:user._id,
+                email,
+                username
+            }
+        })
+        
+    } catch (error) {
+        console.log(error);
+        return res.status(401).json({message:"server error"});
+    }
 }
 
+
+export const login = async (req,res) =>{
+    const {email,password} = req.body;
+
+    if(!email || !password){
+        return res.status(400).json({message:"All fields are required!1"});
+    }
+
+    try {
+        
+    } catch (error) {
+        
+    }
+}
