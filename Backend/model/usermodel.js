@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 
-    const UserSchema =  new  mongoose.Schema({
+    const UserSchema = new mongoose.Schema({
         username:{
             type:String,
             required:[true,"username is required"],
@@ -19,6 +19,6 @@ import mongoose from "mongoose";
     },{timestamps:true})
 
 
-const usermodel = await mongoose.model("user",UserSchema);
+const usermodel = mongoose.model("user",UserSchema);
 
 export default usermodel;
