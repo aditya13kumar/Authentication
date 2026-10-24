@@ -4,6 +4,8 @@ import jwt from "jsonwebtoken";
 
 
 export const register = async (req , res)=>{
+    console.log("headers", req.headers);
+    console.log("body",req.body);
     const {username , email, password} = req.body;
 
     if(!username || !email || !password){
@@ -16,7 +18,7 @@ export const register = async (req , res)=>{
             return res.status(400).json({message:"user allready exist!!"})
         }
         const hashpassword= await bcrypt.hash(password,10);
-        const user = new user({
+        const user = new usermodel({
             username,
             email,
             password:hashpassword
@@ -26,15 +28,16 @@ export const register = async (req , res)=>{
         return res.status(400).json({
             message:"user register successfull!!",
             user:{
-                user:user._id,
-                email,
-                username
+                id:user._id,
+                email:user.email,
+                username:user.username,
+                role:user.role
             }
         })
         
     } catch (error) {
         console.log("register erroer",error);
-        return res.status(401).json({message:"server error"});
+        return res.status(501).json({message:"server error"});
     }
 }
 
@@ -46,7 +49,7 @@ export const login = async (req,res) =>{
         return res.status(400).json({message:"All fields are required!1"});
     }
     try {
-      const user = usermodel.find({email});
+      const user =await usermodel.findOne({email});
       if(!user){
         return res.status(401).json({message:"user not found"});
       }

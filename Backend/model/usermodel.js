@@ -12,7 +12,7 @@ import mongoose from "mongoose";
             required:[true,"email is required"],
             unique:[true,"email allready exists"]
         },
-        passward:{
+        password:{
             type:String,
             required:[true,"passward is required"],
         },
