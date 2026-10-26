@@ -16,6 +16,11 @@ import mongoose from "mongoose";
             type:String,
             required:[true,"passward is required"],
         },
+        role:{
+            type:String,
+            default:"user",
+            enum:["user","admin"]
+        }
     },{timestamps:true})
 
 
